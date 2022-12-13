@@ -1,12 +1,14 @@
-#include "camera.hpp"
-#include "realsense_cam.hpp"
+#include "camera/camera.hpp"
+#include "camera/realsense_cam.hpp"
 #include <iostream>
 #include <memory>
+#include <vector>
 
 using namespace std;
 
 int main() {
   try {
+    std::vector<int> a;
     std::unique_ptr<camera::Camera> cam =
         std::make_unique<camera::RealsenseCamera>();
     cam->get_stream();

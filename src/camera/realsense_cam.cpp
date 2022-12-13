@@ -4,7 +4,18 @@
 
 using namespace camera;
 
-RealsenseCamera::RealsenseCamera() {
+RealsenseCamera::RealsenseCamera() : RealsenseCamera(true) {}
+
+RealsenseCamera::RealsenseCamera(bool vizualize) : _vizualize(vizualize) {
+  if (_vizualize)
+    std::cout << "Started visualization" << std::endl;
+  else
+    std::cout << "Disabled visualization" << std::endl;
+  setup_cam();
+  std::cout << "Realsense camera started!" << std::endl;
+};
+
+void RealsenseCamera::setup_cam() {
   // Check if any realsense device is connected
   rs2::context ctx;
   auto list =
@@ -21,13 +32,15 @@ RealsenseCamera::RealsenseCamera() {
   _pipe.start(_cfg);
   _align_to_depth = std::make_unique<rs2::align>(RS2_STREAM_DEPTH);
   _align_to_color = std::make_unique<rs2::align>(RS2_STREAM_COLOR);
-  std::cout << "Realsense camera started!" << std::endl;
-};
+  return;
+}
+
+void RealsenseCamera::set_visualize(bool viz) { _vizualize = viz; }
 
 void RealsenseCamera::get_stream() {
   rs2::frameset frameset = _pipe.wait_for_frames();
   frameset = _align_to_depth->process(frameset);
-  auto depth = frameset.get_depth_frame();
-  auto color = frameset.get_color_frame();
+  rs2::depth_frame depth = frameset.get_depth_frame();
+  rs2::video_frame color = frameset.get_color_frame();
   return;
 }
